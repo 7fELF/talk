@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: nextcloud
+  name: nextcloud
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: nextcloud
+    spec:
+      containers:
+        - image: antoinebaudrand/nextcloud
+          name: nextcloud
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /var/www/html/custom_apps
+              subPath: custom_apps
+              name: nextcloud-volume
+            - mountPath: /var/www/html/config
+              subPath: config
+              name: nextcloud-volume
+            - mountPath: /var/www/html/data
+              subPath: data
+              name: nextcloud-volume
+      volumes:
+        - name: nextcloud-volume
+          gcePersistentDisk:
+            pdName: nextcloud-disk
+            fsType: ext4
